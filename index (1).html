@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoZ Studio — Motion Design for SaaS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-fontshare/1.0.0/clash-display.css" onerror="this.remove()">
+<style>
+  @font-face {
+    font-family: 'Clash Display';
+    src: url('https://fonts.cdnfonts.com/css/clash-display') format('woff2');
+  }
+  :root{
+    --bg: #04140e;
+    --bg-soft: #07241a;
+    --panel: #0c2f22;
+    --panel-line: #1d4c39;
+    --ink: #f3fbe9;
+    --ink-dim: #a9c9b8;
+    --signal: #9be331;
+    --signal-soft: rgba(155,227,49,0.16);
+    --amber: #d6ff3f;
+    --radius: 18px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(circle at 80% 0%, rgba(155,227,49,0.16), transparent 55%),
+      radial-gradient(circle at 15% 85%, rgba(20,140,90,0.25), transparent 60%),
+      linear-gradient(160deg, #02110c 0%, #0a3326 45%, #0f4a32 75%, #135c3c 100%);
+    background-attachment:fixed;
+    color:var(--ink);
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--signal); color:#fff; }
+
+  .mono{ font-family:'JetBrains Mono', monospace; letter-spacing:0.02em; }
+
+  a{ color:inherit; text-decoration:none; }
+
+  /* ---------- noise / grain overlay ---------- */
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:999;
+    opacity:0.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 5vw;
+    backdrop-filter: blur(14px);
+    background:linear-gradient(to bottom, rgba(4,20,14,0.85), rgba(4,20,14,0));
+  }
+  .logo{
+    font-family:'Clash Display','Inter',sans-serif;
+    font-weight:600; font-size:18px; letter-spacing:0.01em;
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo .dot{ width:8px; height:8px; border-radius:50%; background:var(--signal); box-shadow:0 0 12px var(--signal); }
+  nav ul{ list-style:none; display:flex; gap:36px; }
+  nav a{ font-size:14px; color:var(--ink-dim); transition:color .25s; }
+  nav a:hover{ color:var(--ink); }
+  .nav-cta{
+    font-size:13px; padding:9px 18px; border-radius:999px;
+    border:1px solid var(--panel-line); color:var(--ink) !important;
+    transition: all .25s;
+  }
+  .nav-cta:hover{ border-color:var(--signal); background:var(--signal-soft); }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:140px 5vw 80px;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; color:var(--amber);
+    text-transform:uppercase; letter-spacing:0.14em;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{ content:''; width:18px; height:1px; background:var(--amber); }
+  h1{
+    font-family:'Clash Display','Inter',sans-serif;
+    font-weight:600;
+    font-size:clamp(2.6rem, 5.2vw, 4.6rem);
+    line-height:1.04;
+    letter-spacing:-0.02em;
+  }
+  h1 .line2{ color:var(--ink-dim); }
+  .hero p.lede{
+    margin-top:26px; max-width:480px;
+    font-size:18px; line-height:1.6; color:var(--ink-dim);
+  }
+  .hero-actions{ margin-top:38px; display:flex; gap:16px; align-items:center; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--ink); color:#0a1c12; font-weight:600; font-size:14.5px;
+    padding:14px 26px; border-radius:999px; display:inline-flex; align-items:center; gap:8px;
+    transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 30px -10px rgba(155,227,49,0.35); }
+  .btn-ghost{
+    font-size:14.5px; color:var(--ink-dim); display:inline-flex; align-items:center; gap:8px;
+    transition:color .25s;
+  }
+  .btn-ghost:hover{ color:var(--ink); }
+  .btn-ghost svg{ transition: transform .25s; }
+  .btn-ghost:hover svg{ transform:translateX(3px); }
+
+  /* ---------- 3D layered stack (signature element) ---------- */
+  .stack-wrap{
+    perspective:1400px;
+    display:flex; align-items:center; justify-content:center;
+    height:420px;
+  }
+  .stack{
+    position:relative; width:320px; height:340px;
+    transform-style:preserve-3d;
+    transition: transform .15s ease-out;
+  }
+  .layer{
+    position:absolute; inset:0;
+    border-radius:var(--radius);
+    border:1px solid var(--panel-line);
+    background:linear-gradient(155deg, #103d2b, #06180f);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:18px;
+  }
+  .layer.l1{ transform:translateZ(-60px) translate(22px,22px) rotate(2deg); opacity:.55; }
+  .layer.l2{ transform:translateZ(-30px) translate(11px,11px) rotate(-1deg); opacity:.8; }
+  .layer.l3{ transform:translateZ(0); }
+  .layer .tc{ font-size:11px; color:var(--ink-dim); display:flex; justify-content:space-between; }
+  .layer .tc .rec{ color:var(--amber); display:flex; align-items:center; gap:5px; }
+  .layer .tc .rec::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--amber); animation:pulse 1.4s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+  .layer .bars{ display:flex; align-items:flex-end; gap:4px; height:90px; }
+  .layer .bars span{ flex:1; background:var(--signal); border-radius:3px 3px 0 0; opacity:.85; }
+  .layer .meta{ font-size:11px; color:var(--ink-dim); display:flex; justify-content:space-between; }
+
+  /* ---------- marquee ---------- */
+  .marquee-track{
+    overflow:hidden; border-top:1px solid var(--panel-line); border-bottom:1px solid var(--panel-line);
+    padding:18px 0; background:var(--bg-soft);
+  }
+  .marquee-track .inner{
+    display:flex; gap:60px; white-space:nowrap; animation:scroll 26s linear infinite; width:max-content;
+  }
+  @keyframes scroll{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+  .marquee-track span{ font-size:13px; color:var(--ink-dim); }
+  .marquee-track strong{ color:var(--ink); font-weight:500; }
+
+  /* ---------- section shared ---------- */
+  section{ padding:120px 5vw; }
+  .section-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:30px; margin-bottom:56px; flex-wrap:wrap; }
+  .section-head .tag{ font-size:12px; color:var(--signal); text-transform:uppercase; letter-spacing:0.14em; margin-bottom:14px; display:block; }
+  .section-head h2{
+    font-family:'Clash Display','Inter',sans-serif; font-weight:600;
+    font-size:clamp(1.8rem,3vw,2.6rem); letter-spacing:-0.01em; max-width:600px;
+  }
+  .section-head p{ color:var(--ink-dim); max-width:340px; font-size:15px; line-height:1.6; }
+
+  /* ---------- reel grid (cool graphics — viewfinder cards, bento layout) ---------- */
+  .reel-grid{
+    display:grid; grid-template-columns:repeat(6, minmax(0,1fr)); gap:12px;
+    max-width:680px; margin:0 auto;
+  }
+  .reel-card{
+    position:relative; border-radius:12px; overflow:hidden;
+    grid-column:span 2; aspect-ratio:16/9;
+    background:#0c0d10;
+    transform-style:preserve-3d; cursor:default;
+    transition: transform .45s cubic-bezier(.2,.8,.2,1), box-shadow .45s;
+    isolation:isolate;
+  }
+  .reel-card:nth-child(1){ grid-column:span 3; }
+  .reel-card:nth-child(4){ grid-column:span 2; }
+  .reel-card:nth-child(5){ grid-column:span 2; }
+  .reel-card:nth-child(7){ grid-column:span 4; aspect-ratio:21/9; }
+  @media (max-width:900px){
+    .reel-card, .reel-card:nth-child(1), .reel-card:nth-child(4), .reel-card:nth-child(5), .reel-card:nth-child(7){
+      grid-column:span 3; aspect-ratio:16/9;
+    }
+    .reel-grid{ max-width:480px; }
+  }
+  @media (max-width:560px){
+    .reel-card, .reel-card:nth-child(1), .reel-card:nth-child(4), .reel-card:nth-child(5), .reel-card:nth-child(7){
+      grid-column:span 6;
+    }
+    .reel-grid{ max-width:360px; }
+  }
+
+  /* gradient border ring */
+  .reel-card::before{
+    content:''; position:absolute; inset:0; border-radius:16px; padding:1.5px;
+    background:linear-gradient(135deg, rgba(155,227,49,0.7), rgba(214,255,63,0.5) 45%, rgba(255,255,255,0.06) 70%);
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity:.6; z-index:5; pointer-events:none;
+    transition: opacity .4s;
+  }
+  .reel-card:hover::before{ opacity:1; }
+  .reel-card:hover{
+    box-shadow:0 24px 50px -18px rgba(155,227,49,0.35), 0 0 0 1px rgba(155,227,49,0.15);
+  }
+
+  /* viewfinder corner brackets */
+  .reel-card .bracket{ position:absolute; width:13px; height:13px; z-index:6; opacity:.85; pointer-events:none; }
+  .reel-card .bracket.tl{ top:7px; left:7px; border-top:1.5px solid var(--amber); border-left:1.5px solid var(--amber); border-radius:3px 0 0 0; }
+  .reel-card .bracket.br{ bottom:7px; right:7px; border-bottom:1.5px solid var(--amber); border-right:1.5px solid var(--amber); border-radius:0 0 3px 0; }
+
+  /* scanline sweep accent */
+  .reel-card .scan{
+    position:absolute; left:0; right:0; height:40%; z-index:4; pointer-events:none;
+    background:linear-gradient(to bottom, rgba(155,227,49,0.12), transparent);
+    animation: scan-sweep 5s ease-in-out infinite;
+  }
+  @keyframes scan-sweep{
+    0%{ top:-40%; opacity:0; } 10%{ opacity:1; } 50%{ top:100%; opacity:.5;} 60%{opacity:0;} 100%{ top:100%; opacity:0; }
+  }
+
+  .reel-card.is-playing{ cursor:default; }
+  .reel-card iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; z-index:1; }
+  .reel-card .ph{
+    position:absolute; inset:0; z-index:1;
+    background-size:cover; background-position:center;
+    filter:saturate(1.05) contrast(1.05);
+  }
+  .reel-card .ph::after{
+    content:''; position:absolute; inset:0;
+    background:
+      linear-gradient(to top, rgba(5,6,8,0.85) 0%, rgba(5,6,8,0.05) 45%, rgba(5,6,8,0.35) 100%),
+      linear-gradient(120deg, rgba(155,227,49,0.18), transparent 55%);
+  }
+  .reel-card .play-btn{ position:relative; z-index:2; }
+  .reel-card .corner-tag{ z-index:6; }
+  .reel-meta{ z-index:6; }
+  .mute-btn{
+    position:absolute; bottom:8px; right:8px; z-index:7; border:1px solid rgba(255,255,255,0.25);
+    width:24px; height:24px; border-radius:50%;
+    background:rgba(0,0,0,0.55); backdrop-filter:blur(4px);
+    font-size:11px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition: transform .2s, background .2s;
+  }
+  .mute-btn:hover{ background:var(--signal); transform:scale(1.08); }
+  .play-btn{
+    width:56px; height:56px; border-radius:50%; background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    transition: transform .3s, background .3s;
+  }
+  .reel-card:hover .play-btn{ transform:scale(1.1); background:var(--signal); border-color:var(--signal); }
+  .reel-meta{
+    position:absolute; left:0; right:0; bottom:0; padding:8px 10px;
+    background:linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+    display:flex; justify-content:space-between; align-items:flex-end;
+  }
+  .reel-meta .name{ font-size:11.5px; font-weight:600; line-height:1.2; }
+  .reel-meta .type{ font-size:9.5px; color:var(--ink-dim); }
+  .reel-meta .dur{ font-size:9.5px; color:var(--ink-dim); }
+  .reel-card .corner-tag{
+    position:absolute; top:8px; left:8px; font-size:8.5px; padding:3px 6px;
+    border-radius:5px; background:rgba(0,0,0,0.5); border:1px solid var(--panel-line); color:var(--amber);
+  }
+
+  /* ---------- capabilities ---------- */
+  .cap-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--panel-line); border:1px solid var(--panel-line); border-radius:var(--radius); overflow:hidden; }
+  .cap-card{ background:var(--bg); padding:34px 26px; transition:background .3s; }
+  .cap-card:hover{ background:var(--panel); }
+  .cap-card .tc{ font-size:11px; color:var(--ink-dim); margin-bottom:18px; }
+  .cap-card h3{ font-size:17px; font-weight:600; margin-bottom:10px; }
+  .cap-card p{ font-size:13.5px; color:var(--ink-dim); line-height:1.55; }
+
+  /* ---------- process timeline ---------- */
+  .timeline{ position:relative; padding-left:0; }
+  .tl-row{
+    display:grid; grid-template-columns:120px 1fr; gap:30px; padding:28px 0;
+    border-top:1px solid var(--panel-line); align-items:center;
+  }
+  .tl-row:last-child{ border-bottom:1px solid var(--panel-line); }
+  .tl-row .tc{ font-size:13px; color:var(--signal); }
+  .tl-row h4{ font-size:18px; font-weight:600; margin-bottom:6px; }
+  .tl-row p{ font-size:14px; color:var(--ink-dim); max-width:520px; }
+
+  /* ---------- CTA / contact ---------- */
+  .cta-section{
+    text-align:center; position:relative; overflow:hidden;
+  }
+  .cta-section::before{
+    content:''; position:absolute; top:-200px; left:50%; transform:translateX(-50%);
+    width:800px; height:500px; border-radius:50%;
+    background:radial-gradient(circle, rgba(155,227,49,0.18), transparent 65%);
+    pointer-events:none;
+  }
+  .cta-section h2{
+    font-family:'Clash Display','Inter',sans-serif; font-weight:600;
+    font-size:clamp(2rem,5vw,3.4rem); letter-spacing:-0.02em; line-height:1.08;
+    max-width:760px; margin:0 auto 26px;
+    position:relative;
+  }
+  .cta-section .lede{ color:var(--ink-dim); font-size:16px; max-width:460px; margin:0 auto 40px; position:relative; }
+  .contact-links{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; position:relative; }
+  .contact-pill{
+    display:flex; align-items:center; gap:10px;
+    padding:14px 22px; border-radius:999px; border:1px solid var(--panel-line);
+    font-size:14px; transition: all .3s;
+  }
+  .contact-pill:hover{ border-color:var(--signal); background:var(--signal-soft); transform:translateY(-2px); }
+  .contact-pill .ic{ width:8px; height:8px; border-radius:50%; background:var(--amber); }
+
+  footer{
+    padding:34px 5vw; display:flex; justify-content:space-between; align-items:center;
+    border-top:1px solid var(--panel-line); font-size:12.5px; color:var(--ink-dim);
+  }
+
+  /* reveal on scroll */
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  @media (max-width:900px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .stack-wrap{ height:280px; order:-1; }
+    .reel-grid{ grid-template-columns:1fr 1fr; gap:12px; }
+    .cap-grid{ grid-template-columns:1fr 1fr; }
+    nav ul{ display:none; }
+    .tl-row{ grid-template-columns:1fr; gap:8px; }
+  }
+  @media (max-width:560px){
+    .reel-grid{ grid-template-columns:1fr; max-width:420px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<header>
+  <div class="logo"><span class="dot"></span>GoZ Studio</div>
+  <nav>
+    <ul>
+      <li><a href="#reel">Reel</a></li>
+      <li><a href="#capabilities">Capabilities</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <a href="#contact" class="nav-cta">Start a project</a>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <span class="eyebrow mono">Motion design · SaaS explainers</span>
+      <h1>Software, explained<br><span class="line2">in motion.</span></h1>
+      <p class="lede">I'm Isaac — GoZ Studio. I edit and animate explainer videos for SaaS products: the kind that turn a confusing feature into a 40-second "oh, I get it now."</p>
+      <div class="hero-actions">
+        <a href="#reel" class="btn-primary">
+          Watch the reel
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="#0a1c12" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#contact" class="btn-ghost">
+          Get a quote
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="stack-wrap">
+      <div class="stack" id="tiltStack">
+        <div class="layer l1">
+          <div class="tc mono"><span>00:00:14:02</span><span>B-ROLL</span></div>
+          <div class="bars"></div>
+          <div class="meta mono"><span>TRACK 03</span><span>—</span></div>
+        </div>
+        <div class="layer l2">
+          <div class="tc mono"><span>00:00:08:11</span><span>VO</span></div>
+          <div class="bars"></div>
+          <div class="meta mono"><span>TRACK 02</span><span>—</span></div>
+        </div>
+        <div class="layer l3">
+          <div class="tc mono"><span class="rec">REC</span><span>00:00:02:18</span></div>
+          <div class="bars"></div>
+          <div class="meta mono"><span>TRACK 01 · MASTER</span><span>4K · 60FPS</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-track">
+  <div class="inner mono">
+    <span><strong>After Effects</strong> · primary tool</span>
+    <span><strong>Cinema 4D</strong> · 3D & product renders</span>
+    <span><strong>Premiere Pro</strong> · edit & color</span>
+    <span><strong>SaaS onboarding</strong> · explainer specialty</span>
+    <span><strong>UI motion</strong> · app walkthroughs</span>
+    <span><strong>After Effects</strong> · primary tool</span>
+    <span><strong>Cinema 4D</strong> · 3D & product renders</span>
+    <span><strong>Premiere Pro</strong> · edit & color</span>
+    <span><strong>SaaS onboarding</strong> · explainer specialty</span>
+    <span><strong>UI motion</strong> · app walkthroughs</span>
+  </div>
+</div>
+
+<section id="reel">
+  <div class="section-head reveal">
+    <div>
+      <span class="tag mono">Selected work</span>
+      <h2>SaaS explainer reel</h2>
+    </div>
+    <p>Videos autoplay muted as you scroll past — tap the speaker icon on any card to unmute.</p>
+  </div>
+  <div class="reel-grid" id="reelGrid"></div>
+</section>
+
+<script>
+  // ============================================================
+  // 👉 PUT YOUR VIDEOS HERE 👈
+  // Replace the YouTube "id" below with your own video IDs
+  // (the part after youtu.be/ in your link, e.g. youtu.be/OR9c8IXWTjI -> id: "OR9c8IXWTjI")
+  // "name" and "type" are just the labels shown on the card.
+  // NOTE: this page must be opened via http(s) — NOT by double-clicking
+  // the file — or YouTube embeds will fail to load. See chat for hosting steps.
+  // ============================================================
+  const videos = [
+    { id: "OR9c8IXWTjI", name: "Project 01", type: "SaaS edit" },
+    { id: "HUxrXX-iAP8", name: "Project 02", type: "SaaS edit" },
+    { id: "UPPMcMdncEk", name: "Project 03", type: "SaaS edit" },
+    { id: "Td0awJnRdMA", name: "Project 04", type: "SaaS edit" },
+    { id: "QZkJ_mrHsrY", name: "Project 05", type: "SaaS edit" },
+    { id: "V3o52OIMciQ", name: "Project 06", type: "SaaS edit" },
+    { id: "EmVJsmh_6qk", name: "Project 07", type: "SaaS edit" }
+  ];
+
+  const grid = document.getElementById('reelGrid');
+  videos.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = 'reel-card reveal';
+    card.setAttribute('data-tilt','');
+    card.setAttribute('data-id', v.id);
+    card.innerHTML = `
+      <div class="ph yt-thumb" style="background-image:url('https://i.ytimg.com/vi/${v.id}/hqdefault.jpg')"></div>
+      <div class="scan"></div>
+      <div class="bracket tl"></div>
+      <div class="bracket br"></div>
+      <button class="mute-btn mono" type="button" aria-label="Unmute">🔇</button>
+      <div class="corner-tag mono">REEL ${String(i+1).padStart(2,'0')}</div>
+      <div class="reel-meta">
+        <div><div class="name">${v.name}</div><div class="type mono">${v.type}</div></div>
+        <div class="dur mono">YT</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // load + autoplay (muted) each video once its card scrolls into view
+  const playObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const card = entry.target;
+      const id = card.getAttribute('data-id');
+      if (entry.isIntersecting) {
+        if (!card.querySelector('iframe')) {
+          const muted = card.getAttribute('data-muted') !== 'false';
+          const ph = card.querySelector('.ph');
+          if (ph) ph.remove();
+          const iframe = document.createElement('iframe');
+          iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=${muted ? 1 : 0}&loop=1&playlist=${id}&controls=1&playsinline=1&rel=0`;
+          iframe.title = card.querySelector('.name').textContent;
+          iframe.allow = "accelerate-motion; autoplay; encrypted-media; picture-in-picture";
+          iframe.allowFullscreen = true;
+          card.prepend(iframe);
+          card.classList.add('is-playing');
+        }
+      }
+    });
+  }, { threshold: 0.4 });
+
+  document.querySelectorAll('.reel-card').forEach(card => {
+    card.setAttribute('data-muted', 'true');
+    playObserver.observe(card);
+    const muteBtn = card.querySelector('.mute-btn');
+    muteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = card.getAttribute('data-id');
+      const isMuted = card.getAttribute('data-muted') !== 'false';
+      card.setAttribute('data-muted', isMuted ? 'false' : 'true');
+      muteBtn.textContent = isMuted ? '🔊' : '🔇';
+      const iframe = card.querySelector('iframe');
+      if (iframe) {
+        iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&mute=${isMuted ? 0 : 1}&loop=1&playlist=${id}&controls=1&playsinline=1&rel=0`;
+      }
+    });
+  });
+
+  io2Observe();
+  function io2Observe(){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('#reelGrid .reveal').forEach(el=>io.observe(el));
+  }
+</script>
+
+<section id="capabilities">
+  <div class="section-head reveal">
+    <div>
+      <span class="tag mono">What I do</span>
+      <h2>Built for product teams that need clarity fast</h2>
+    </div>
+    <p>Every capability here exists to answer one question: will the viewer understand the product in under a minute?</p>
+  </div>
+  <div class="cap-grid reveal">
+    <div class="cap-card">
+      <div class="tc mono">01</div>
+      <h3>Explainer videos</h3>
+      <p>Script-to-screen SaaS explainers that simplify features without dumbing them down.</p>
+    </div>
+    <div class="cap-card">
+      <div class="tc mono">02</div>
+      <h3>UI / product motion</h3>
+      <p>Recreating your real interface in motion — clean cursor paths, state changes, micro-interactions.</p>
+    </div>
+    <div class="cap-card">
+      <div class="tc mono">03</div>
+      <h3>3D product renders</h3>
+      <p>Cinema 4D builds for hero shots, app icons, and abstract brand visuals.</p>
+    </div>
+    <div class="cap-card">
+      <div class="tc mono">04</div>
+      <h3>Edit & color</h3>
+      <p>Footage assembly, pacing, sound design, and grade — the full post pipeline.</p>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="section-head reveal">
+    <div>
+      <span class="tag mono">How it works</span>
+      <h2>From brief to final export — in 6 days</h2>
+    </div>
+    <p>A tight four-step process built to ship a finished explainer in under a week.</p>
+  </div>
+  <div class="timeline reveal">
+    <div class="tl-row">
+      <div class="tc mono">DAY 1</div>
+      <div><h4>Brief & script</h4><p>We align on the feature, the audience, and the single takeaway the video needs to land.</p></div>
+    </div>
+    <div class="tl-row">
+      <div class="tc mono">DAY 2</div>
+      <div><h4>Storyboard & style frames</h4><p>Visual direction locked before animation starts — no surprises at review.</p></div>
+    </div>
+    <div class="tl-row">
+      <div class="tc mono">DAY 3–5</div>
+      <div><h4>Animation</h4><p>Full motion pass in After Effects, with 3D elements built in Cinema 4D where needed.</p></div>
+    </div>
+    <div class="tl-row">
+      <div class="tc mono">DAY 6</div>
+      <div><h4>Sound, color, delivery</h4><p>Sound design, grade, and export in whatever formats your team ships in.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section" id="contact">
+  <span class="tag mono reveal">Let's make something</span>
+  <h2 class="reveal">Have a product that needs explaining? Let's put it in motion.</h2>
+  <p class="lede reveal">Send a brief or just say hi — I usually reply within a day.</p>
+  <div class="contact-links reveal">
+    <a class="contact-pill" href="mailto:isaacta702@gmail.com"><span class="ic"></span>isaacta702@gmail.com</a>
+    <a class="contact-pill" href="https://x.com/goz_studio_" target="_blank" rel="noopener"><span class="ic"></span>@goz_studio_ on X</a>
+    <a class="contact-pill" href="https://instagram.com/goz_studio_" target="_blank" rel="noopener"><span class="ic"></span>@goz_studio_ on Instagram</a>
+  </div>
+</section>
+
+<footer>
+  <span class="mono">© 2026 GoZ Studio</span>
+  <span class="mono">Built for explainers, not noise.</span>
+</footer>
+
+<script>
+  // 3D tilt on hero stack (mouse + touch)
+  const stack = document.getElementById('tiltStack');
+  const stackWrap = document.querySelector('.stack-wrap');
+  function tiltFromPoint(el, target, clientX, clientY){
+    const r = el.getBoundingClientRect();
+    const x = (clientX - r.left) / r.width - 0.5;
+    const y = (clientY - r.top) / r.height - 0.5;
+    target.style.transform = `rotateY(${x*22}deg) rotateX(${-y*22}deg)`;
+  }
+  stackWrap.addEventListener('mousemove', (e) => tiltFromPoint(stackWrap, stack, e.clientX, e.clientY));
+  stackWrap.addEventListener('mouseleave', () => { stack.style.transform = 'rotateY(0deg) rotateX(0deg)'; });
+  stackWrap.addEventListener('touchmove', (e) => {
+    const t = e.touches[0];
+    tiltFromPoint(stackWrap, stack, t.clientX, t.clientY);
+  }, { passive: true });
+  stackWrap.addEventListener('touchend', () => { stack.style.transform = 'rotateY(0deg) rotateX(0deg)'; });
+
+  // tilt on reel cards (mouse + touch) — skipped once a video is playing
+  function attachTilt(card){
+    function tilt(clientX, clientY){
+      if (card.classList.contains('is-playing')) return;
+      const r = card.getBoundingClientRect();
+      const x = (clientX - r.left)/r.width - 0.5;
+      const y = (clientY - r.top)/r.height - 0.5;
+      card.style.transform = `perspective(800px) rotateY(${x*10}deg) rotateX(${-y*10}deg) translateY(-4px)`;
+    }
+    function reset(){ if(!card.classList.contains('is-playing')) card.style.transform = 'perspective(800px) rotateY(0) rotateX(0) translateY(0)'; }
+    card.addEventListener('mousemove', (e)=> tilt(e.clientX, e.clientY));
+    card.addEventListener('mouseleave', reset);
+    card.addEventListener('touchstart', (e)=>{ const t=e.touches[0]; tilt(t.clientX, t.clientY); }, { passive:true });
+    card.addEventListener('touchmove', (e)=>{ const t=e.touches[0]; tilt(t.clientX, t.clientY); }, { passive:true });
+    card.addEventListener('touchend', reset);
+  }
+
+  // animate timeline bars
+  document.querySelectorAll('.bars').forEach(bar=>{
+    for(let i=0;i<14;i++){
+      const span = document.createElement('span');
+      const h = 20 + Math.random()*70;
+      span.style.height = h+'%';
+      bar.appendChild(span);
+    }
+  });
+
+  document.querySelectorAll('[data-tilt]').forEach(attachTilt);
+
+  // scroll reveal
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
